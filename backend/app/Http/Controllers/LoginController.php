@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\LoginNeedsVerification;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
@@ -24,8 +25,17 @@ class LoginController extends Controller
         }
 
         // create a one-time use code
-        //$user->notify
+        $user->notify(new LoginNeedsVerification());
 
         // return back a response
+        return response()->json(['message' => "Text message notification sent"]);
+    }
+
+    public function verify(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|numeric|min:10',
+            'login_code' => 'required|numeric|between:111111,999999'
+        ]);
     }
 }
